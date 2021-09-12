@@ -1,1 +1,32 @@
-Test
+<div class="container" *ngIf="(countries$ | async); let countries">
+  <table
+    class="table"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    cdk-table
+    (cdkDropListSorted)="changeColumnSort($event)"
+    (soringChanged)="changeSort($event)"
+    sortableTable
+    [sortField]="sortColumn"
+    [dataSource]="countries">
+
+    <ng-container cdkColumnDef="name">
+      <th  scope="col" cdkDrag (click)="setSorting('name')" cdkDragLockAxis="x" cdkDragBoundary="mat-header-row" *cdkHeaderCellDef> Name </th>
+      <td cdk-cell *cdkCellDef="let country"><img [src]="country.flag" width="32" alt=""> {{country.name}} </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="population">
+      <th  scope="col" cdkDrag (click)="setSorting('population')" cdkDragLockAxis="x" cdkDragBoundary="mat-header-row"  cdk-header-cell *cdkHeaderCellDef> Population </th>
+      <td cdk-cell *cdkCellDef="let country"> {{country.population | number}} </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="area">
+      <th  scope="col" cdkDrag (click)="setSorting('area')" cdkDragLockAxis="x" cdkDragBoundary="mat-header-row"  cdk-header-cell *cdkHeaderCellDef> Area </th>
+      <td cdk-cell *cdkCellDef="let country"> {{country.area | number}} </td>
+    </ng-container>
+
+    <tr cdk-header-row class="tableHeaderRow" *cdkHeaderRowDef="displayedColumns"></tr>
+    <tr cdk-row *cdkRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+</div>
