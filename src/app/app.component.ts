@@ -1,8 +1,10 @@
-import {ChangeDetectorRef, Component} from '@angular/core';
-import {CdkDragSortEvent, moveItemInArray} from "@angular/cdk/drag-drop";
-import {HttpClient} from "@angular/common/http";
+import {Component} from '@angular/core';
+import {Store} from "@ngrx/store";
+import {IAppStore} from "./store/app-store.inteface";
+import {CountriesStoreActions, CountriesStoreSelectors} from "./store/countries";
+import {Observable} from "rxjs";
 import {Country} from "./country.interface";
-import {BehaviorSubject, Observable, of} from "rxjs";
+import {Sort} from "./types/enums/sort.enum";
 
 @Component({
   selector: 'app-root',
@@ -11,40 +13,29 @@ import {BehaviorSubject, Observable, of} from "rxjs";
 })
 export class AppComponent {
   title = 'clickup-test';
-  public displayedColumns: string[];
-  public sortColumn: string;
-  public countries$: BehaviorSubject<Country[]>;
+  public countries$: Observable<Array<Country>>;
+  public displayColumns: Array<{ label: string; key: keyof Country }>;
 
   constructor(
-    public readonly http: HttpClient,
-    private changeDetectorRefs: ChangeDetectorRef
+    private readonly store$: Store<IAppStore>
   ) {
-    this.countries$ = new BehaviorSubject<Country[]>([]);
-    this.displayedColumns = [
-      'name', 'population', 'area'
+    this.displayColumns = [
+      {label: 'Name', key: 'name'},
+      {label: 'Area', key: 'area'},
+      {label: 'Population', key: 'population'},
     ]
-    this.sortColumn = '';
     this.getCountries();
+    this.countries$ = this.store$.select(CountriesStoreSelectors.selectList);
   }
 
-  changeColumnSort($event: CdkDragSortEvent<any>) {
-    moveItemInArray(this.displayedColumns, $event.previousIndex, $event.currentIndex);
+  public getCountries(): void {
+    this.store$.dispatch(CountriesStoreActions.getCountries());
   }
 
-  setSorting(columnName: string): void {
-    this.sortColumn = columnName;
-  }
-
-  changeSort($event: Array<any>) {
-    console.log('changed', $event);
-    this.countries$.next($event)
-    this.changeDetectorRefs.detectChanges();
-
-  }
-
-  getCountries(): void {
-    this.http.get<Array<Country>>('https://restcountries.eu/rest/v2/all').subscribe((res) => {
-      this.countries$.next(res)
-    })
+  public updateSorting({sortBy, sort}: {sortBy: keyof Country, sort: Sort}): void {
+    this.store$.dispatch(CountriesStoreActions.sortCountriesByColumn({
+      column: sortBy,
+      sort
+    }))
   }
 }

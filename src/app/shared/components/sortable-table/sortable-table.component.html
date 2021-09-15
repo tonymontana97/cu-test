@@ -1,0 +1,23 @@
+<div class="container">
+  <table
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListSorted)="changeColumnSort($event)"
+    class="table table-bordered table-dark">
+    <thead>
+    <tr class="cu-table-thead-row">
+      <th
+        cdkDrag
+        cdkDragLockAxis="x" cdkDragBoundary="cu-table-thead-row"
+        *ngFor="let column of displayColumns"
+        (click)="changeSortColumn(column.key)">{{ column.label }} <span class="text-muted"
+        *ngIf="sortBy === column.key">{{ isDESC ? 'DESC' : 'ASC' }}</span></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of items; trackBy:trackBy">
+      <td *ngFor="let column of displayColumns">{{ item[column.key] }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

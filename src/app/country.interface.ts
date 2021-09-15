@@ -1,4 +1,5 @@
 export interface Country {
+  id: number,
   alpha2Code: string;
   alpha3Code: string;
   altSpellings: Array<string>;
