@@ -1,3 +1,5 @@
+
+{{ queries | json}}
 <div class="container">
   <table
     cdkDropList
@@ -10,12 +12,18 @@
         cdkDrag
         cdkDragLockAxis="x" cdkDragBoundary="cu-table-thead-row"
         *ngFor="let column of displayColumns"
-        (click)="changeSortColumn(column.key)">{{ column.label }} <span class="text-muted"
-        *ngIf="sortBy === column.key">{{ isDESC ? 'DESC' : 'ASC' }}</span></th>
+      >
+        <div (click)="changeSortColumn(column.key)">
+          {{ column.label }}
+          <span class="text-muted" *ngIf="sortBy === column.key">{{ isDESC ? 'DESC' : 'ASC' }}</span>
+        </div>
+        <input type="text" [(ngModel)]="queries[column.key]" (ngModelChange)="switchSearchField(column.key)"
+               placeholder="Search By {{ column.label }}" class="form-control">
+      </th>
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let item of items; trackBy:trackBy">
+    <tr *ngFor="let item of items | Search:queries[searchField]:searchField; trackBy:trackBy">
       <td *ngFor="let column of displayColumns">{{ item[column.key] }}</td>
     </tr>
     </tbody>

@@ -23,10 +23,16 @@ export class SortableTableComponent {
   public changeSort: EventEmitter<{ sortBy: any; sort: Sort }>;
 
   public sort: Sort;
+  public query: string;
+  public queries: Record<string, string>;
+  public searchField: string;
 
   constructor() {
     this.items = [];
+    this.query = '';
     this.sort = Sort.Asc;
+    this.queries = {};
+    this.searchField = '';
     this.sortBy = '';
     this.displayColumns = [];
     this.changeSort = new EventEmitter<{ sortBy: any; sort: Sort }>();
@@ -52,5 +58,9 @@ export class SortableTableComponent {
 
   public trackBy(index: number, item: any): string {
     return item.id;
+  }
+
+  public switchSearchField(key: string) {
+    this.searchField = key;
   }
 }
